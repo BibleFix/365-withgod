@@ -43,6 +43,13 @@ main{max-width:640px;margin:0 auto;padding:16px 16px 100px}
 .verse .pref{font-family:"Cormorant Garamond",serif;font-size:28px;font-weight:700;font-style:normal;color:#fff;margin-top:4px}
 .openbible{display:inline-block;margin-top:12px;background:var(--gold);color:var(--navy);text-decoration:none;font:700 13px Inter;padding:8px 14px;border-radius:9px}
 .monthintro{border-top:4px solid var(--gold)}
+.openbible{border:none;cursor:pointer}
+.passage{background:#fffdf8;color:var(--ink);border-radius:12px;padding:14px 16px;margin-top:12px}
+.ptxt{font-family:"Cormorant Garamond",serif;font-size:20px;line-height:1.55}
+.ptxt sup{font:700 10px Inter;color:var(--gold);margin-right:2px}
+.pfoot{font-size:11px;color:var(--muted);margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.nivlink{color:var(--gold);font-weight:600;text-decoration:none}
+
 .step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .step .num{flex:none;width:52px;font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--gold);padding-top:3px}
 .step b{color:var(--navy)}
@@ -174,7 +181,7 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
     </div>
   </section>
 
-  <div class="foot">365 Days with God: Daily Bread · © 2026 BibleFix. All rights reserved.</div>
+  <div class="foot">365 Days with God: Daily Bread · © 2026 BibleFix. All rights reserved.<br>Scripture passages in the app: World English Bible (public domain).<br><a href="privacy.html" style="color:inherit">Privacy Policy</a></div>
 </main>
 
 <nav class="tabs">
@@ -186,6 +193,7 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
 </nav>
 
 <script src="days.js"></script>
+<script src="passages.js"></script>
 <script>
 // ===== DEVOTIONALS =====
 // The 365 devotionals live in days.js.
@@ -242,7 +250,7 @@ function render(){
   const intro = first&&M ? `<div class="card monthintro"><div class="lab2">MONTH ${mi+1} OF 12 · ${esc(M.name.toUpperCase())}</div><div class="title" style="font-size:24px">${esc(M.theme)}</div>
     <p class="prayer" style="margin:8px 0">${esc(M.tagline)}</p>
     <div class="verse" style="padding-top:18px"><div class="lab2">ANCHOR PASSAGE</div><p class="pref">${esc(M.anchor)}</p><div class="ref">The passage for the whole month of ${esc(M.name)}</div>
-      <a class="openbible" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(M.anchor)}&version=NIV" target="_blank" rel="noopener">Open passage ↗</a></div>
+      ${passageBlock(M.anchor,"p1")}</div>
     <div class="sec"><h3>This Month</h3><p style="font-size:15px">${esc(M.intro)}</p></div></div>` : "";
   const welcome = store.get("seenHowto",false) ? "" : howtoHTML(true);
   $("content").innerHTML = welcome + banner + intro + `
@@ -250,7 +258,7 @@ function render(){
     <button class="fav" id="favBtn" aria-label="Save">${isFav?"♥":"♡"}</button>
     <div class="title">${esc(d.title)}</div>
     <div class="verse"><button class="copy" id="copyBtn">Copy</button><div class="lab2">TODAY'S SCRIPTURE</div><p class="pref">${esc(d.ref)}</p><div class="ref">Read it in your Bible before you read on</div>
-      <a class="openbible" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(d.ref)}&version=NIV" target="_blank" rel="noopener">Open passage ↗</a></div>
+      ${passageBlock(d.ref,"p0")}</div>
     <div class="sec reflect"><h3>Reflection</h3>${d.reflection.map(p=>`<p>${esc(p)}</p>`).join("")}</div>
     <div class="sec"><h3>Today's Practice</h3><p>${esc(d.practice)}</p></div>
     <div class="sec"><h3>Prayer</h3><p class="prayer">${esc(d.prayer)}</p></div>
@@ -267,6 +275,25 @@ function render(){
   let t;$("note").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{notes[cur]=e.target.value;store.set("notes",notes);$("savedMsg").textContent="Saved on this device"},500)};
 }
 
+
+
+// ===== SCRIPTURE PASSAGES (offline, WEB) =====
+const PASSAGES=(typeof RAW_PASSAGES!=="undefined"?RAW_PASSAGES:{});
+let openPassages=store.get("openPassages",false);
+function passageBlock(ref,id){
+  const v=PASSAGES[ref];
+  const online=`<a class="nivlink" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=NIV" target="_blank" rel="noopener">Read in NIV online ↗</a>`;
+  if(!v) return `<div style="margin-top:12px">${online}</div>`;
+  const multi=v.some(x=>x[0]!==v[0][0]); let last=null;
+  const text=v.map(([c,n,t])=>{const lab=(multi&&last!==c)?`${c}:${n}`:n; last=c; return `<sup>${lab}</sup>${esc(t)}`}).join(" ");
+  return `<button class="openbible" data-pt="${id}">${openPassages?"Hide passage":"📖 Read passage"}</button>
+    <div class="passage ${openPassages?"":"hidden"}" id="${id}"><div class="ptxt">${text}</div><div class="pfoot">World English Bible · ${online}</div></div>`;
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pt]");if(!b)return;
+  const el=$(b.dataset.pt); if(!el)return; const show=el.classList.contains("hidden");
+  document.querySelectorAll(".passage").forEach(p=>p.classList.toggle("hidden",!show));
+  document.querySelectorAll("[data-pt]").forEach(x=>x.textContent=show?"Hide passage":"📖 Read passage");
+  openPassages=show; store.set("openPassages",show);});
 
 // ===== HOW TO USE =====
 const HOWTO=[["Read the passage first.","Every day names a short passage. Open your Bible and read it before you read the reflection. The reflection is a companion to Scripture, never a replacement for it."],
