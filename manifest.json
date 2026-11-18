@@ -1,13 +1,13 @@
 {
-  "name": "Daily Bread — 365 Days with God",
-  "short_name": "Daily Bread",
+  "name": "365 Days with God",
+  "short_name": "365 Days with God",
   "description": "A daily devotional from BibleFix: Scripture, reflection, prayer and journal for every day of the year.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
+  "background_color": "#0e2244",
   "theme_color": "#1b2a4a",
   "categories": [
     "books",

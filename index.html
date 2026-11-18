@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Daily Bread — BibleFix</title>
+<title>365 Days with God</title>
 <meta name="theme-color" content="#1b2a4a">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Daily Bread">
+<meta name="apple-mobile-web-app-title" content="365 Days with God">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -27,16 +27,28 @@ h1{font-family:"Cormorant Garamond",serif;font-size:30px;font-weight:700;margin-
 .stat b{color:var(--gold2);font-size:16px;display:block;line-height:1.2}
 main{max-width:640px;margin:0 auto;padding:16px 16px 100px}
 .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.btn{background:var(--card);border:1px solid var(--line);color:var(--navy);border-radius:10px;padding:8px 14px;font:600 14px Inter;cursor:pointer}
+.btn{white-space:nowrap;flex:none;background:var(--card);border:1px solid var(--line);color:var(--navy);border-radius:10px;padding:8px 14px;font:600 14px Inter;cursor:pointer}
 .btn:disabled{opacity:.35;cursor:default}
 .daylabel{text-align:center}
-.daylabel .d{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:700;color:var(--navy)}
+.daylabel{flex:1;min-width:0;padding:0 6px}
+.daylabel .d{font-family:"Cormorant Garamond",serif;font-size:19px;line-height:1.2;font-weight:700;color:var(--navy)}
 .daylabel .t{font-size:11px;letter-spacing:.15em;color:var(--gold);font-weight:600;text-transform:uppercase}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 10px rgba(27,42,74,.05)}
 .title{font-family:"Cormorant Garamond",serif;font-size:28px;font-weight:700;color:var(--navy);line-height:1.2}
-.verse{background:var(--navy);color:#fff;border-radius:14px;padding:18px;margin:14px 0 4px;position:relative}
+.verse{background:var(--navy);color:#fff;border-radius:14px;padding:38px 18px 18px;margin:14px 0 4px;position:relative}
 .verse p{font-family:"Cormorant Garamond",serif;font-size:21px;line-height:1.4;font-style:italic}
-.verse .ref{color:var(--gold2);font-size:13px;font-weight:600;margin-top:8px;letter-spacing:.05em}
+.verse .ref{color:#c8cfdf;font-size:13px;margin-top:4px}
+.lab2{font-size:11px;letter-spacing:.2em;color:var(--gold2);font-weight:700}
+.monthintro .lab2{color:var(--gold)}
+.verse .pref{font-family:"Cormorant Garamond",serif;font-size:28px;font-weight:700;font-style:normal;color:#fff;margin-top:4px}
+.openbible{display:inline-block;margin-top:12px;background:var(--gold);color:var(--navy);text-decoration:none;font:700 13px Inter;padding:8px 14px;border-radius:9px}
+.monthintro{border-top:4px solid var(--gold)}
+.step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.step .num{flex:none;width:52px;font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--gold);padding-top:3px}
+.step b{color:var(--navy)}
+.step p{font-size:14px;color:var(--ink);margin-top:2px}
+.howto{border-top:4px solid var(--gold)}
+
 .copy{position:absolute;top:10px;right:10px;background:transparent;border:1px solid #4a5f8f;color:#c8cfdf;border-radius:8px;font:500 11px Inter;padding:3px 8px;cursor:pointer}
 .reflect p{margin-bottom:12px;font-size:15.5px}
 .sec h3{font-size:11px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
@@ -64,8 +76,16 @@ textarea:focus{outline:2px solid var(--gold2);border-color:transparent}
 .fav{background:none;border:none;font-size:22px;cursor:pointer;float:right;color:var(--gold)}
 .empty{text-align:center;color:var(--muted);padding:30px 10px}
 .foot{text-align:center;font-size:11px;color:var(--muted);margin-top:18px;line-height:1.5}
-.hidden{display:none}
-.tabs button{padding:4px 10px}
+.hidden{display:none!important}
+.tabs button{padding:4px 6px}
+.vod{background:linear-gradient(160deg,var(--navy),#31487a);color:#fff;border-radius:18px;padding:26px 22px;text-align:center;position:relative;overflow:hidden}
+.vod .lab{font-size:11px;letter-spacing:.25em;color:var(--gold2);font-weight:700}
+.vod .date{font-size:12px;color:#c8cfdf;margin-top:2px}
+.vod p{font-family:"Cormorant Garamond",serif;font-size:26px;line-height:1.35;font-style:italic;margin:18px 0 12px}
+.vod .ref{color:var(--gold2);font-weight:600;letter-spacing:.05em}
+.vod .tr{font-size:10px;color:#9fb0d1;margin-top:2px}
+.btnrow{display:flex;gap:8px;margin-top:12px}
+.btnrow .btn2{margin-top:0}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .row:last-child{border-bottom:none}
 .row .lbl{font-weight:600;color:var(--navy)}
@@ -109,6 +129,22 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
     <div id="content"></div>
   </section>
 
+
+  <section id="vGive" class="hidden">
+    <div class="vod"><div class="lab">SUPPORT BIBLEFIX</div>
+      <p style="font-size:24px;font-style:normal;font-weight:700;margin:12px 0 8px">Help us share God's Word</p>
+      <div class="date" style="font-size:14px;line-height:1.5">BibleFix is free. Your gift helps us keep making devotionals, videos and resources that point people to Jesus.</div></div>
+    <div class="card" style="margin-top:14px">
+      <p class="prayer" style="text-align:center">“Every man according as he purposeth in his heart, so let him give; not grudgingly, or of necessity: for God loveth a cheerful giver.”</p>
+      <p style="text-align:center;color:var(--gold);font-weight:600;font-size:13px;margin-top:6px">2 Corinthians 9:7 (KJV)</p>
+      <div id="giveBtns"></div>
+      <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px">Donations are processed securely by PayPal. Gifts to BibleFix are not tax-deductible.</p>
+    </div>
+    <div class="card"><div class="sec" style="margin-top:0"><h3>Other ways to help</h3></div>
+      <p style="font-size:15px">Pray for this ministry, share the app with a friend, and subscribe to BibleFix on YouTube. Thank you! 🙏</p>
+    </div>
+  </section>
+
   <section id="vPlan" class="hidden"></section>
   <section id="vSaved" class="hidden"></section>
 
@@ -116,7 +152,7 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
     <div class="card">
       <div class="title" style="font-size:24px">Daily Reminder</div>
       <p class="hint" style="color:var(--muted);font-size:14px;margin-top:4px">Pick a time to meet with God each day.</p>
-      <div class="row"><div><div class="lbl">Reminder on</div><div class="hint">Remind me to read Daily Bread</div></div>
+      <div class="row"><div><div class="lbl">Reminder on</div><div class="hint">Remind me to spend time with God</div></div>
         <label class="switch"><input type="checkbox" id="rOn"><span class="slider"></span></label></div>
       <div class="row"><div class="lbl">Time</div><input type="time" id="rTime" value="07:00"></div>
       <div class="row" style="display:block"><div class="lbl">Days</div><div class="days" id="rDays"></div></div>
@@ -124,21 +160,21 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
 
     <div class="card">
       <div class="sec" style="margin-top:0"><h3>Phone alarm (most reliable)</h3></div>
-      <p style="font-size:14px">Adds a repeating Daily Bread event with an alert to your phone's calendar. It rings even when the app is closed.</p>
+      <p style="font-size:14px">Adds a repeating “365 Days with God” event with an alert to your phone's calendar. It rings even when the app is closed.</p>
       <button class="btn2" id="rCal">📅 Add reminder to my calendar</button>
       <div class="msg" id="rCalMsg"></div>
     </div>
 
     <div class="card">
       <div class="sec" style="margin-top:0"><h3>App notifications</h3></div>
-      <p style="font-size:14px">Get a notification from Daily Bread if you haven't read today's devotional after your reminder time.</p>
+      <p style="font-size:14px">Get a notification if you haven't read today's devotional after your reminder time.</p>
       <button class="btn2 alt" id="rNotif">🔔 Turn on notifications</button>
       <button class="btn2 alt" id="rTest">Send a test notification</button>
       <div class="msg" id="rNotifMsg"></div>
     </div>
   </section>
 
-  <div class="foot">© 2026 BibleFix · Scripture quotations taken from the Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.® Used by permission. All rights reserved worldwide.</div>
+  <div class="foot">365 Days with God: Daily Bread · © 2026 BibleFix. All rights reserved.</div>
 </main>
 
 <nav class="tabs">
@@ -146,56 +182,16 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
   <button data-v="vPlan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Plan</button>
   <button data-v="vSaved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21l-1.5-1.3C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.4.8 4.5 2.1C13.1 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.5 11.2z"/></svg>Saved</button>
   <button data-v="vRemind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Remind</button>
+  <button data-v="vGive" id="giveTab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v9H4v-9"/><rect x="2" y="7" width="20" height="5"/><path d="M12 21V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Give</button>
 </nav>
 
+<script src="days.js"></script>
 <script>
 // ===== DEVOTIONALS =====
-// To add more days, copy one block below and change the fields.
-const MONTH_THEMES = ["New Beginnings","Love","Faith","Hope","Prayer","Strength","Peace","Trust","Wisdom","Gratitude","Faithfulness","Joy"];
-const DAYS = [
-{day:1,title:"All Things New",verse:"See, I am doing a new thing! Now it springs up; do you not perceive it?",ref:"Isaiah 43:19",
-reflection:["A new year often comes with a mix of hope and worry. We look back at what went wrong and wonder whether this year will be any different. But God does not ask us to carry last year into this one. He invites us to look up and notice what He is already doing.","The question in this verse is gentle: do you not perceive it? God's new work often starts small, like a shoot breaking through dry ground. It may be a new desire to pray, a fresh peace about an old wound, or the courage to take a step you have put off. Today, slow down long enough to notice."],
-practice:"Write down one area of your life where you want to see God do something new this year.",
-prayer:"Lord, thank You that Your mercies are new every morning. Open my eyes to see the new things You are doing in me and around me. Amen.",
-question:"What old habit or fear do I need to leave behind to walk into what God is doing?",
-reminder:"God is not finished with you. He is doing a new thing."},
-{day:2,title:"Seek Him First",verse:"But seek first his kingdom and his righteousness, and all these things will be given to you as well.",ref:"Matthew 6:33",
-reflection:["Our days fill up quickly. Work, family, bills, and phones compete for our first thoughts. Jesus does not say these things are unimportant; He says they belong in the right order.","Seeking God first is less about a rigid schedule and more about a posture of the heart. It means asking, before anything else, \"Lord, what do You want here?\" When God has first place, everything else finds its proper place."],
-practice:"Before checking your phone tomorrow morning, spend five minutes in Scripture and prayer.",
-prayer:"Father, I want You to be first in my day, my decisions, and my desires. Teach me to seek Your kingdom above everything else. Amen.",
-question:"What usually gets my first attention each day, and what would change if God did?",
-reminder:"Put God first, and He will take care of the rest."},
-{day:3,title:"A Lamp for My Feet",verse:"Your word is a lamp for my feet, a light on my path.",ref:"Psalm 119:105",
-reflection:["A lamp in the ancient world did not light up the whole road. It lit the next few steps. That is often how God guides us. We want the full map; He gives us enough light for today.","This is an invitation to trust. As you read God's Word daily, He shows you the next faithful step. You may not see the whole year ahead, but you can see enough to walk with Him today."],
-practice:"Choose one verse from today's reading and carry it with you on a card or in your phone notes.",
-prayer:"Lord, let Your Word light my way. Help me trust You with the steps I cannot see yet. Amen.",
-question:"Where am I demanding to see the whole path instead of trusting God for the next step?",
-reminder:"You don't need the whole map. You need the Light."},
-{day:4,title:"Created on Purpose",verse:"For we are God's handiwork, created in Christ Jesus to do good works, which God prepared in advance for us to do.",ref:"Ephesians 2:10",
-reflection:["You are not an accident. The word \"handiwork\" points to something crafted with care. God made you intentionally and saved you with purpose.","Notice that the good works were prepared in advance. You don't have to invent your calling from scratch. God has already placed opportunities in your path: a neighbor to encourage, a coworker to serve, a gift to use. Your job is to walk in them."],
-practice:"Look for one \"prepared\" good work today, a small act of kindness God puts in front of you, and do it.",
-prayer:"Creator God, thank You for making me with purpose. Show me the good works You have prepared for me today. Amen.",
-question:"What gifts has God given me that I am not using for Him?",
-reminder:"You are God's masterpiece, made for a purpose."},
-{day:5,title:"Strength for Today",verse:"Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the LORD your God will be with you wherever you go.",ref:"Joshua 1:9",
-reflection:["Joshua stood at the edge of a huge assignment. Moses was gone, and the people were looking to him. God's answer to his fear was not a list of strategies but a promise of presence.","Courage is not the absence of fear. It is moving forward because God goes with you. Whatever stands in front of you this week, you will not face it alone."],
-practice:"Name the situation that makes you most anxious right now, and pray this verse over it out loud.",
-prayer:"Lord, when I feel afraid, remind me that You are with me wherever I go. Give me courage for today. Amen.",
-question:"What would I do differently this week if I truly believed God was with me?",
-reminder:"You are never alone. God goes with you."},
-{day:6,title:"Rest for the Weary",verse:"Come to me, all you who are weary and burdened, and I will give you rest.",ref:"Matthew 11:28",
-reflection:["Jesus does not say, \"Get your life together, then come.\" He says, \"Come\" to the tired and the overloaded. His invitation is for exactly the people who feel they have nothing left.","The rest Jesus gives goes deeper than sleep. It is rest for the soul: freedom from trying to earn God's love, from carrying burdens He never asked you to carry alone."],
-practice:"Take ten quiet minutes today with no phone. Tell Jesus what is weighing on you and leave it with Him.",
-prayer:"Jesus, I am tired. I come to You with my burdens. Give my soul the rest only You can give. Amen.",
-question:"What burden am I carrying that Jesus is inviting me to hand over?",
-reminder:"Come as you are. Jesus gives rest."},
-{day:7,title:"His Faithful Love",verse:"Because of the LORD's great love we are not consumed, for his compassions never fail. They are new every morning; great is your faithfulness.",ref:"Lamentations 3:22-23",
-reflection:["These words were written in one of the darkest seasons of Israel's history. Jerusalem lay in ruins. Yet in the middle of grief, the writer remembered something stronger than his pain: God's love does not run out.","As you finish your first week, look back. God has been faithful every single day, whether you felt it or not. And tomorrow morning, His compassion will be there again, brand new."],
-practice:"List three ways you have seen God's faithfulness this week.",
-prayer:"Faithful God, thank You that Your love never fails and Your mercies are new every morning. I trust You with the week ahead. Amen.",
-question:"How has God been faithful to me in a season I thought I wouldn't get through?",
-reminder:"His mercies are new every morning."}
-];
+// The 365 devotionals live in days.js.
+const MONTHS = (typeof RAW_MONTHS!=="undefined"?RAW_MONTHS:[]);
+const MONTH_THEMES = MONTHS.map(m=>m.theme);
+const DAYS = (typeof RAW_DAYS!=="undefined"?RAW_DAYS:[]).map((x,i)=>({day:i+1,title:x.t,ref:x.r,reflection:x.p,practice:x.a,prayer:x.pr,question:x.q,reminder:x.m}));
 
 // ===== STORAGE (safe) =====
 const store = {
@@ -211,8 +207,13 @@ const $ = id => document.getElementById(id);
 const esc = s => s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ymd = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const todayStr = () => ymd(new Date());
-function dayOfYear(){const n=new Date(),s=new Date(n.getFullYear(),0,0);return Math.floor((n-s)/864e5)}
-function dateForDay(d){const dt=new Date(new Date().getFullYear(),0,d);return dt.toLocaleDateString("en-US",{month:"long",day:"numeric"})}
+function dayOfYear(){
+  const n=new Date(), y=n.getFullYear();
+  const d=Math.round((new Date(y,n.getMonth(),n.getDate())-new Date(y,0,0))/864e5);
+  const leap=(y%4===0&&y%100!==0)||y%400===0;
+  return leap&&d>=60?d-1:d; // Feb 29 repeats Feb 28's reading
+}
+function dateForDay(d){const dt=new Date(2025,0,d);return dt.toLocaleDateString("en-US",{month:"long",day:"numeric"})}
 function monthOf(d){return new Date(2025,0,d).getMonth()}
 const maxDay = Math.max(...DAYS.map(x=>x.day));
 const byDay = Object.fromEntries(DAYS.map(x=>[x.day,x]));
@@ -234,14 +235,22 @@ function render(){
   $("theme").textContent = MONTH_THEMES[monthOf(cur)];
   $("prev").disabled = !DAYS.some(x=>x.day<cur);
   $("next").disabled = !DAYS.some(x=>x.day>cur);
-  const banner = reminderDue() ? `<div class="banner"><span>🔔 Time for today's Daily Bread</span><button id="goToday">Read now</button></div>` : "";
+  const banner = reminderDue() ? `<div class="banner"><span>🔔 Time for today's reading</span><button id="goToday">Read now</button></div>` : "";
   if(!d){$("content").innerHTML=banner+'<div class="card empty">This day hasn\'t been added yet.</div>';return}
   const isFav=favs.includes(cur), isDone=!!done[cur];
-  $("content").innerHTML = banner + `
+  const mi=monthOf(cur), first=dateForDay(cur).endsWith(" 1"), M=MONTHS[mi];
+  const intro = first&&M ? `<div class="card monthintro"><div class="lab2">MONTH ${mi+1} OF 12 · ${esc(M.name.toUpperCase())}</div><div class="title" style="font-size:24px">${esc(M.theme)}</div>
+    <p class="prayer" style="margin:8px 0">${esc(M.tagline)}</p>
+    <div class="verse" style="padding-top:18px"><div class="lab2">ANCHOR PASSAGE</div><p class="pref">${esc(M.anchor)}</p><div class="ref">The passage for the whole month of ${esc(M.name)}</div>
+      <a class="openbible" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(M.anchor)}&version=NIV" target="_blank" rel="noopener">Open passage ↗</a></div>
+    <div class="sec"><h3>This Month</h3><p style="font-size:15px">${esc(M.intro)}</p></div></div>` : "";
+  const welcome = store.get("seenHowto",false) ? "" : howtoHTML(true);
+  $("content").innerHTML = welcome + banner + intro + `
   <div class="card">
     <button class="fav" id="favBtn" aria-label="Save">${isFav?"♥":"♡"}</button>
     <div class="title">${esc(d.title)}</div>
-    <div class="verse"><button class="copy" id="copyBtn">Copy</button><p>“${esc(d.verse)}”</p><div class="ref">${esc(d.ref)} (NIV)</div></div>
+    <div class="verse"><button class="copy" id="copyBtn">Copy</button><div class="lab2">TODAY'S SCRIPTURE</div><p class="pref">${esc(d.ref)}</p><div class="ref">Read it in your Bible before you read on</div>
+      <a class="openbible" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(d.ref)}&version=NIV" target="_blank" rel="noopener">Open passage ↗</a></div>
     <div class="sec reflect"><h3>Reflection</h3>${d.reflection.map(p=>`<p>${esc(p)}</p>`).join("")}</div>
     <div class="sec"><h3>Today's Practice</h3><p>${esc(d.practice)}</p></div>
     <div class="sec"><h3>Prayer</h3><p class="prayer">${esc(d.prayer)}</p></div>
@@ -250,18 +259,33 @@ function render(){
     <div class="sec"><h3>Remember</h3><div class="remind">${esc(d.reminder)}</div></div>
   </div>
   <button class="done ${isDone?"is":""}" id="doneBtn">${isDone?"✓ Completed":"Mark as Read"}</button>`;
+  if($("howtoOk")) $("howtoOk").onclick=()=>{store.set("seenHowto",true);render();scrollTo(0,0)};
   if($("goToday")) $("goToday").onclick=()=>{cur=byDay[todayDay]?todayDay:cur;render()};
   $("favBtn").onclick=()=>{favs=isFav?favs.filter(x=>x!==cur):[...favs,cur];store.set("favs",favs);stats();render()};
   $("doneBtn").onclick=()=>{if(isDone)delete done[cur];else done[cur]=todayStr();store.set("done",done);stats();render()};
-  $("copyBtn").onclick=async e=>{try{await navigator.clipboard.writeText(`"${d.verse}" — ${d.ref} (NIV)\n\n#BibleFix #DailyBread`);e.target.textContent="Copied!"}catch(_){e.target.textContent="Can't copy"}setTimeout(()=>e.target.textContent="Copy",1500)};
+  $("copyBtn").onclick=async e=>{try{await navigator.clipboard.writeText(`Today's Scripture: ${d.ref}\n${d.title}\n\n"${d.reminder}"\n\n365 Days with God #BibleFix`);e.target.textContent="Copied!"}catch(_){e.target.textContent="Can't copy"}setTimeout(()=>e.target.textContent="Copy",1500)};
   let t;$("note").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{notes[cur]=e.target.value;store.set("notes",notes);$("savedMsg").textContent="Saved on this device"},500)};
 }
+
+
+// ===== HOW TO USE =====
+const HOWTO=[["Read the passage first.","Every day names a short passage. Open your Bible and read it before you read the reflection. The reflection is a companion to Scripture, never a replacement for it."],
+["Read the reflection slowly.","Resist the urge to skim. If one sentence stops you, stop there \u2014 you have found the part that was for you today."],
+["Do the practice.","Each day ends with one concrete action, deliberately small and specific. A year of small obediences changes a life; a year of good intentions does not."],
+["Pray the prayer, then pray your own.","The written prayer is a starting point, not a script. Use it to begin and then say the thing you actually need to say."],
+["Sit with the question.","One question per day, written to be uncomfortable. Carry it with you. If it is still bothering you at lunchtime, it is working."]];
+const NUMS=["ONE","TWO","THREE","FOUR","FIVE"];
+function howtoHTML(withBtn,compact){return `<div class="${compact?"":"card howto"}" ${compact?'style="padding:0 16px 16px"':""}>${compact?"":'<div class="lab2" style="color:var(--gold)">BEFORE YOU BEGIN</div><div class="title" style="font-size:24px">How to Use This Book</div>'}
+  <p style="font-size:15px;margin:6px 0 4px">One page for every day of the year. Not a chapter, not a study \u2014 a page. Built to be read in the time it takes to drink a cup of coffee, and to stay with you for the rest of the day.</p>
+  ${HOWTO.map((h,i)=>`<div class="step"><div class="num">${NUMS[i]}</div><div><b>${h[0]}</b><p>${h[1]}</p></div></div>`).join("")}
+  <div class="remind" style="margin-top:12px">You will miss days. Do not start over. Just turn to today's date and begin again.</div>
+  ${withBtn?'<button class="btn2" id="howtoOk">Start reading</button>':""}</div>`}
 
 // ===== RENDER: PLAN =====
 function renderPlan(){
   const months={};DAYS.forEach(d=>{(months[monthOf(d.day)]??=[]).push(d)});
-  $("vPlan").innerHTML = Object.entries(months).map(([m,list])=>`
-    <div class="card month"><h2>${new Date(2025,m,1).toLocaleDateString("en-US",{month:"long"})}</h2><div class="th">${MONTH_THEMES[m]}</div>
+  $("vPlan").innerHTML = `<details class="card" style="padding:0"><summary style="padding:16px 20px;cursor:pointer;font-weight:700;color:var(--navy)">📖 How to Use This Book</summary><div style="padding:0 4px 4px">${howtoHTML(false,true)}</div></details>` + Object.entries(months).map(([m,list])=>`
+    <div class="card month"><h2>${new Date(2025,m,1).toLocaleDateString("en-US",{month:"long"})}</h2><div class="th">${esc(MONTH_THEMES[m]||"")}</div>${MONTHS[m]?`<p style="font-size:13px;color:var(--muted);margin:-4px 0 10px">${esc(MONTHS[m].tagline)}</p>`:""}
     <div class="grid">${list.map(d=>`<div class="cell ${done[d.day]?"c":""} ${d.day===todayDay?"today":""}" data-d="${d.day}"><b>${d.day}</b>${done[d.day]?"✓":"Day"}</div>`).join("")}</div></div>`).join("")
     + `<div class="card empty">${DAYS.length} of 365 days loaded</div>`;
   document.querySelectorAll(".cell").forEach(c=>c.onclick=()=>{cur=+c.dataset.d;show("vToday")});
@@ -272,16 +296,16 @@ function renderSaved(){
   const list=favs.map(f=>byDay[f]).filter(Boolean).sort((a,b)=>a.day-b.day);
   $("vSaved").innerHTML = list.length ? list.map(d=>`
     <div class="card" style="cursor:pointer" data-d="${d.day}"><div class="th" style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.15em">DAY ${d.day}</div>
-    <div class="title" style="font-size:22px">${esc(d.title)}</div><p style="font-style:italic;color:var(--muted);margin-top:4px">“${esc(d.verse)}” — ${esc(d.ref)}</p></div>`).join("")
+    <div class="title" style="font-size:22px">${esc(d.title)}</div><p style="color:var(--gold);font-weight:600;font-size:13px;margin-top:2px">${esc(d.ref)}</p><p style="font-style:italic;color:var(--muted);margin-top:4px">${esc(d.reminder)}</p></div>`).join("")
     : '<div class="card empty">Tap ♡ on any day to save it here.</div>';
   document.querySelectorAll("#vSaved .card[data-d]").forEach(c=>c.onclick=()=>{cur=+c.dataset.d;show("vToday")});
 }
 
 // ===== NAV =====
 function show(v){
-  ["vToday","vPlan","vSaved","vRemind"].forEach(id=>$(id).classList.toggle("hidden",id!==v));
+  ["vToday","vPlan","vSaved","vRemind","vGive"].forEach(id=>$(id).classList.toggle("hidden",id!==v));
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
-  if(v==="vToday")render(); if(v==="vPlan")renderPlan(); if(v==="vSaved")renderSaved();
+  if(v==="vToday")render(); if(v==="vPlan")renderPlan(); if(v==="vSaved")renderSaved(); if(v==="vGive")renderGive();
   window.scrollTo(0,0);
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
@@ -312,7 +336,7 @@ function checkReminder(){
   if(reminderDue() && rem.last!==todayStr()){
     rem.last=todayStr(); saveRem();
     const d=byDay[todayDay];
-    notify("Time for Daily Bread 📖", d ? `Day ${d.day}: ${d.title} — ${d.ref}` : "Spend a few minutes with God today.");
+    notify("365 Days with God 📖", d ? `Day ${d.day}: ${d.title} — ${d.ref}` : "Spend a few minutes with God today.");
     if(!$("vToday").classList.contains("hidden")) render();
   }
 }
@@ -337,7 +361,7 @@ $("rNotif").onclick=async()=>{
   renderRemind();
 };
 $("rTest").onclick=async()=>{
-  const ok=await notify("Daily Bread 📖","This is how your daily reminder will look.");
+  const ok=await notify("365 Days with God 📖","This is how your daily reminder will look.");
   $("rNotifMsg").textContent = ok?"Test sent!":"Couldn't send. Tap \"Turn on notifications\" first, or use the calendar reminder.";
 };
 $("rCal").onclick=()=>{
@@ -348,8 +372,8 @@ $("rCal").onclick=()=>{
   if(!rem.days.length){$("rCalMsg").textContent="Pick at least one day.";return}
   const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//BibleFix//Daily Bread//EN","BEGIN:VEVENT",
     "UID:dailybread-"+Date.now()+"@biblefix","DTSTAMP:"+stamp,"DTSTART:"+start,"DURATION:PT15M","RRULE:"+rule,
-    "SUMMARY:📖 Daily Bread with God","DESCRIPTION:Time for today's devotional. Open the Daily Bread app.",
-    "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Time for Daily Bread","TRIGGER:-PT0M","END:VALARM",
+    "SUMMARY:📖 365 Days with God","DESCRIPTION:Time for today's reading. Open the 365 Days with God app.",
+    "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Time for 365 Days with God","TRIGGER:-PT0M","END:VALARM",
     "END:VEVENT","END:VCALENDAR"].join("\r\n");
   saveIcs(ics);
 };
@@ -367,6 +391,22 @@ async function saveIcs(ics){
   }catch(e){$("rCalMsg").textContent="Couldn't create the file here. Try again from the installed app."}
 };
 const _show=show; show=function(v){_show(v); if(v==="vRemind") renderRemind();};
+
+// ===== GIVE / DONATIONS =====
+// Put your PayPal link here, e.g. "https://www.paypal.com/paypalme/YourName"
+const PAYPAL_URL="https://www.paypal.com/ncp/payment/8ZJYM3SKSCB7G";
+// The Google Play version hides donations (Play only allows them for registered charities).
+const IS_PLAY_APP = (()=>{try{return document.referrer.startsWith("android-app://")||sessionStorage.getItem("bf_play")==="1"}catch(e){return false}})();
+try{ if(IS_PLAY_APP) sessionStorage.setItem("bf_play","1"); }catch(e){}
+if(IS_PLAY_APP || !PAYPAL_URL){ $("giveTab").remove(); }
+function renderGive(){
+  const amts=[5,10,25,50];
+  const me=/paypal\.me|paypalme/i.test(PAYPAL_URL);
+  $("giveBtns").innerHTML = PAYPAL_URL
+    ? `${me?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">${amts.map(a=>`<a class="btn2" style="text-align:center;text-decoration:none;margin:0" href="${PAYPAL_URL.replace(/\/$/,"")}/${a}USD" target="_blank" rel="noopener">$${a}</a>`).join("")}</div>`:""}
+       <a class="btn2" style="display:block;text-align:center;text-decoration:none;background:#ffc439;color:#1b2a4a;font-weight:700" href="${PAYPAL_URL}" target="_blank" rel="noopener">${me?"Give any amount with PayPal":"Give with PayPal"}</a>`
+    : `<p class="center" style="color:var(--muted);margin-top:14px">Giving is coming soon.</p>`;
+}
 
 // offline + install support
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
