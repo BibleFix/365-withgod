@@ -1,5 +1,5 @@
 // Daily Bread service worker: offline reading + notification taps
-const CACHE = "daily-bread-v42";
+const CACHE = "daily-bread-v43";
 const FILES = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "icon-maskable-512.png", "days.js", "passages.js", "privacy.html"];
 
 self.addEventListener("install", e => {
