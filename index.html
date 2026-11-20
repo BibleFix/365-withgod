@@ -43,6 +43,35 @@ main{max-width:640px;margin:0 auto;padding:16px 16px 100px}
 .verse .pref{font-family:"Cormorant Garamond",serif;font-size:28px;font-weight:700;font-style:normal;color:#fff;margin-top:4px}
 .openbible{display:inline-block;margin-top:12px;background:var(--gold);color:var(--navy);text-decoration:none;font:700 13px Inter;padding:8px 14px;border-radius:9px}
 .monthintro{border-top:4px solid var(--gold)}
+/* keep Ko-fi's floating button and popup above the bottom menu */
+[class*="floatingchat-container-wrap"]{bottom:calc(78px + env(safe-area-inset-bottom)) !important;left:12px !important}
+[class*="floating-chat-kofi-popup-iframe"]{bottom:calc(140px + env(safe-area-inset-bottom)) !important;max-height:calc(100vh - 170px) !important}
+
+.kofi{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;background:#72a4f2;color:#fff;text-decoration:none;border-radius:12px;padding:13px;font:700 15px Inter;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+
+
+.shopgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.prod{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column}
+.cover{aspect-ratio:3/4;background:linear-gradient(160deg,var(--navy),#31487a);position:relative;display:flex;align-items:center;justify-content:center;padding:12px;text-align:center}
+.cover span{font-family:"Cormorant Garamond",serif;font-weight:700;color:#fff;font-size:18px;line-height:1.15}
+.cover{flex-direction:column;gap:8px;border-bottom:3px solid var(--gold)}
+.cimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 50%}
+.ck{font:700 9px Inter;letter-spacing:.18em;color:var(--gold2)}
+.cb{position:absolute;bottom:10px;font:700 8px Inter;letter-spacing:.3em;color:rgba(255,255,255,.55)}
+.pinfo{padding:10px 11px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.pinfo b{font-size:14px;color:var(--navy);line-height:1.25}
+.pinfo small{font-size:12px;color:var(--muted);line-height:1.3}
+.prow{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:6px}
+.price{font-weight:700;color:var(--navy);font-size:14px}
+.price.free{color:#2f7a52}
+.buy{font-size:12px;font-weight:700;color:var(--gold)}
+
+.install{border-top:4px solid var(--gold)}
+.ih{font-weight:700;color:var(--navy);margin-top:14px;font-size:15px}
+.isteps{padding-left:22px;margin-top:6px}
+.isteps li{font-size:14.5px;margin-bottom:6px}
+.inote{font-size:13px;color:var(--muted);margin-top:8px}
+
 .openbible{border:none;cursor:pointer}
 .passage{background:#fffdf8;color:var(--ink);border-radius:12px;padding:14px 16px;margin-top:12px}
 .ptxt{font-family:"Cormorant Garamond",serif;font-size:20px;line-height:1.55}
@@ -252,7 +281,7 @@ function render(){
     <div class="verse" style="padding-top:18px"><div class="lab2">ANCHOR PASSAGE</div><p class="pref">${esc(M.anchor)}</p><div class="ref">The passage for the whole month of ${esc(M.name)}</div>
       ${passageBlock(M.anchor,"p1")}</div>
     <div class="sec"><h3>This Month</h3><p style="font-size:15px">${esc(M.intro)}</p></div></div>` : "";
-  const welcome = store.get("seenHowto",false) ? "" : howtoHTML(true);
+  const welcome = (store.get("seenHowto",false) ? "" : howtoHTML(true)) + (store.get("seenHowto",false)?installCard():"");
   $("content").innerHTML = welcome + banner + intro + `
   <div class="card">
     <button class="fav" id="favBtn" aria-label="Save">${isFav?"♥":"♡"}</button>
@@ -295,6 +324,36 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-pt]");if(!
   document.querySelectorAll("[data-pt]").forEach(x=>x.textContent=show?"Hide passage":"📖 Read passage");
   openPassages=show; store.set("openPassages",show);});
 
+
+// ===== INSTALL GUIDE =====
+const UA=navigator.userAgent||"";
+const IS_IOS=/iPhone|iPad|iPod/i.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const IS_ANDROID=/Android/i.test(UA);
+function isInstalled(){try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true||document.referrer.startsWith("android-app://")}catch(e){return false}}
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;if(!$("vToday").classList.contains("hidden"))render()});
+window.addEventListener("appinstalled",()=>{deferredPrompt=null;store.set("installHidden",true);render()});
+const STEPS_ANDROID=["Open this page in <b>Chrome</b>.","Tap the <b>⋮</b> menu at the top right.","Tap <b>Install app</b> (or <b>Add to Home screen</b>).","Tap <b>Install</b>. The 365 Days with God icon appears on your home screen."];
+const STEPS_IOS=["Open this page in <b>Safari</b>.","Tap the <b>Share</b> button (the square with an arrow pointing up) at the bottom.","Scroll down and tap <b>Add to Home Screen</b>.","Tap <b>Add</b>. The 365 Days with God icon appears on your home screen."];
+const stepList=a=>`<ol class="isteps">${a.map(x=>`<li>${x}</li>`).join("")}</ol>`;
+function installCard(){
+  if(isInstalled()||store.get("installHidden",false)) return "";
+  const which=IS_IOS?"iphone":IS_ANDROID?"android":"both";
+  const btn=deferredPrompt?'<button class="btn2" id="instBtn">📲 Install the app</button>':"";
+  const body= which==="iphone" ? `<p class="ih">On iPhone</p>${stepList(STEPS_IOS)}<p class="inote">Tip: to get reminder notifications on iPhone, open the app from its home screen icon.</p>`
+    : which==="android" ? `${btn}<p class="ih">${btn?"Or install manually":"On Android"}</p>${stepList(STEPS_ANDROID)}`
+    : `<p class="ih">On Android</p>${stepList(STEPS_ANDROID)}<p class="ih">On iPhone</p>${stepList(STEPS_IOS)}`;
+  return `<div class="card install"><div class="lab2" style="color:var(--gold)">FREE APP</div><div class="title" style="font-size:22px">Install 365 Days with God</div>
+    <p style="font-size:14px;color:var(--muted);margin:4px 0 6px">Put it on your home screen to open it like any app, read offline, and get daily reminders.</p>${body}
+    <button class="btn2 alt" id="instHide">Not now</button></div>`;
+}
+function installGuideHTML(){return `<div style="padding:0 16px 16px"><p class="ih">On Android (Chrome)</p>${stepList(STEPS_ANDROID)}<p class="ih">On iPhone (Safari)</p>${stepList(STEPS_IOS)}<p class="inote">Already installed? Just open it from your home screen. Your journal and progress stay on this phone.</p></div>`}
+document.addEventListener("click",async e=>{
+  if(e.target.id==="instBtn"&&deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(_){}deferredPrompt=null;render()}
+  if(e.target.id==="instHide"){store.set("installHidden",true);render()}
+});
+
+
 // ===== HOW TO USE =====
 const HOWTO=[["Read the passage first.","Every day names a short passage. Open your Bible and read it before you read the reflection. The reflection is a companion to Scripture, never a replacement for it."],
 ["Read the reflection slowly.","Resist the urge to skim. If one sentence stops you, stop there \u2014 you have found the part that was for you today."],
@@ -311,7 +370,7 @@ function howtoHTML(withBtn,compact){return `<div class="${compact?"":"card howto
 // ===== RENDER: PLAN =====
 function renderPlan(){
   const months={};DAYS.forEach(d=>{(months[monthOf(d.day)]??=[]).push(d)});
-  $("vPlan").innerHTML = `<details class="card" style="padding:0"><summary style="padding:16px 20px;cursor:pointer;font-weight:700;color:var(--navy)">📖 How to Use This Book</summary><div style="padding:0 4px 4px">${howtoHTML(false,true)}</div></details>` + Object.entries(months).map(([m,list])=>`
+  $("vPlan").innerHTML = (isInstalled()?"":`<details class="card" style="padding:0"><summary style="padding:16px 20px;cursor:pointer;font-weight:700;color:var(--navy)">📲 Install on your phone</summary>${installGuideHTML()}</details>`) + `<details class="card" style="padding:0"><summary style="padding:16px 20px;cursor:pointer;font-weight:700;color:var(--navy)">📖 How to Use This Book</summary><div style="padding:0 4px 4px">${howtoHTML(false,true)}</div></details>` + Object.entries(months).map(([m,list])=>`
     <div class="card month"><h2>${new Date(2025,m,1).toLocaleDateString("en-US",{month:"long"})}</h2><div class="th">${esc(MONTH_THEMES[m]||"")}</div>${MONTHS[m]?`<p style="font-size:13px;color:var(--muted);margin:-4px 0 10px">${esc(MONTHS[m].tagline)}</p>`:""}
     <div class="grid">${list.map(d=>`<div class="cell ${done[d.day]?"c":""} ${d.day===todayDay?"today":""}" data-d="${d.day}"><b>${d.day}</b>${done[d.day]?"✓":"Day"}</div>`).join("")}</div></div>`).join("")
     + `<div class="card empty">${DAYS.length} of 365 days loaded</div>`;
@@ -419,9 +478,11 @@ async function saveIcs(ics){
 };
 const _show=show; show=function(v){_show(v); if(v==="vRemind") renderRemind();};
 
+
+
 // ===== GIVE / DONATIONS =====
 // Put your PayPal link here, e.g. "https://www.paypal.com/paypalme/YourName"
-const PAYPAL_URL="https://www.paypal.com/ncp/payment/8ZJYM3SKSCB7G";
+const PAYPAL_URL="https://www.paypal.com/ncp/payment/2B5S6V7U3CXV4";
 // The Google Play version hides donations (Play only allows them for registered charities).
 const IS_PLAY_APP = (()=>{try{return document.referrer.startsWith("android-app://")||sessionStorage.getItem("bf_play")==="1"}catch(e){return false}})();
 try{ if(IS_PLAY_APP) sessionStorage.setItem("bf_play","1"); }catch(e){}
@@ -431,9 +492,35 @@ function renderGive(){
   const me=/paypal\.me|paypalme/i.test(PAYPAL_URL);
   $("giveBtns").innerHTML = PAYPAL_URL
     ? `${me?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">${amts.map(a=>`<a class="btn2" style="text-align:center;text-decoration:none;margin:0" href="${PAYPAL_URL.replace(/\/$/,"")}/${a}USD" target="_blank" rel="noopener">$${a}</a>`).join("")}</div>`:""}
-       <a class="btn2" style="display:block;text-align:center;text-decoration:none;background:#ffc439;color:#1b2a4a;font-weight:700" href="${PAYPAL_URL}" target="_blank" rel="noopener">${me?"Give any amount with PayPal":"Give with PayPal"}</a>`
-    : `<p class="center" style="color:var(--muted);margin-top:14px">Giving is coming soon.</p>`;
+       <a class="btn2" style="display:block;text-align:center;text-decoration:none;background:#ffc439;color:#1b2a4a;font-weight:700" href="${PAYPAL_URL}" target="_blank" rel="noopener">${me?"Give any amount with PayPal":"Give with PayPal"}</a>
+       ${kofiBtn()}`
+    : kofiBtn();
 }
+// Ko-fi support button (same look as Ko-fi's widget, built in so it works offline and in installed apps)
+const KOFI_ID="F1F41EEUWI";
+function kofiBtn(){return `<a class="kofi" href="https://ko-fi.com/${KOFI_ID}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#fff" d="M3 6h13a1 1 0 0 1 1 1v1h1.5a3.5 3.5 0 0 1 0 7H17v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/><path fill="#ff5e5b" d="M10 10.2c.6-.9 2.4-.7 2.4.8 0 1.3-2.4 2.8-2.4 2.8s-2.4-1.5-2.4-2.8c0-1.5 1.8-1.7 2.4-.8z"/><path fill="#72a4f2" d="M17 10h1.5a1.5 1.5 0 0 1 0 3H17z"/></svg>Support me on Ko-fi</a>`}
+
+
+// ===== KO-FI FLOATING "SUPPORT ME" BUTTON (web version only, needs internet) =====
+function loadKofiOverlay(){
+  try{
+    if(IS_PLAY_APP || navigator.onLine===false || window.__kofiLoaded) return;
+    window.__kofiLoaded=true;
+    const sc=document.createElement("script");
+    sc.src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js";
+    sc.async=true;
+    sc.onload=()=>{ try{ kofiWidgetOverlay.draw("biblefix",{
+      "type":"floating-chat",
+      "floating-chat.donateButton.text":"Support me",
+      "floating-chat.donateButton.background-color":"#00b9fe",
+      "floating-chat.donateButton.text-color":"#fff"
+    }); }catch(e){} };
+    sc.onerror=()=>{ window.__kofiLoaded=false; };
+    document.head.appendChild(sc);
+  }catch(e){}
+}
+window.addEventListener("load",()=>setTimeout(loadKofiOverlay,1500));
+window.addEventListener("online",loadKofiOverlay);
 
 // offline + install support
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
