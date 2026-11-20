@@ -324,7 +324,7 @@ function render(){
   $("doneBtn").onclick=()=>{if(isDone)delete done[cur];else done[cur]=todayStr();store.set("done",done);stats();render()};
   $("copyBtn").onclick=async e=>{try{await navigator.clipboard.writeText(`Today's Scripture: ${d.ref}\n${d.title}\n\n"${d.reminder}"\n\n365 Days with God #BibleFix`);e.target.textContent="Copied!"}catch(_){e.target.textContent="Can't copy"}setTimeout(()=>e.target.textContent="Copy",1500)};
   $("shareBtn").onclick=()=>shareDay(d);
-  let t;$("note").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{notes[cur]=e.target.value;store.set("notes",notes);$("savedMsg").textContent="Saved on this device"},500)};
+  let t;$("note").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{if(e.target.value.trim())notes[cur]=e.target.value;else delete notes[cur];store.set("notes",notes);$("savedMsg").textContent="Saved on this device"},500)};
 }
 
 
@@ -430,15 +430,15 @@ let prayers = store.get("prayers",[]);   // [{id,text,date,answered}]
 let jTab = "prayers", pFilter = "open";
 const niceDate = s => { try{ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}) }catch(e){ return s } };
 function renderJournal(){
-  $("vSaved").innerHTML = `<div class="seg"><button id="jP" class="${jTab==="prayers"?"on":""}">Prayers</button><button id="jS" class="${jTab==="saved"?"on":""}">Saved days</button></div><div id="jBody"></div>`;
-  $("jP").onclick=()=>{jTab="prayers";renderJournal()}; $("jS").onclick=()=>{jTab="saved";renderJournal()};
-  jTab==="prayers" ? renderPrayers() : renderSaved();
+  $("vSaved").innerHTML = `<div class="seg"><button id="jP" class="${jTab==="prayers"?"on":""}">My Prayers</button><button id="jN" class="${jTab==="notes"?"on":""}">My Journal</button><button id="jS" class="${jTab==="saved"?"on":""}">Saved</button></div><div id="jBody"></div>`;
+  $("jP").onclick=()=>{jTab="prayers";renderJournal()}; $("jS").onclick=()=>{jTab="saved";renderJournal()}; $("jN").onclick=()=>{jTab="notes";renderJournal()};
+  jTab==="prayers" ? renderPrayers() : jTab==="notes" ? renderNotes() : renderSaved();
 }
 function renderPrayers(){
   const open=prayers.filter(p=>!p.answered), ans=prayers.filter(p=>p.answered);
   const list=(pFilter==="open"?open:ans).slice().sort((a,b)=>b.id-a.id);
   $("jBody").innerHTML = `<div class="card">
-      <div class="title" style="font-size:22px">My Prayer List</div>
+      <div class="title" style="font-size:22px">My Prayers</div>
       <p style="font-size:14px;color:var(--muted);margin:4px 0 10px">Write what you're praying for. When God answers, tap the circle to mark it answered.</p>
       <textarea id="pNew" placeholder="What are you praying for?" style="min-height:80px"></textarea>
       <button class="btn2" id="pAdd">Add prayer</button>
@@ -455,6 +455,21 @@ function renderPrayers(){
   $("fO").onclick=()=>{pFilter="open";renderPrayers()}; $("fA").onclick=()=>{pFilter="ans";renderPrayers()};
   document.querySelectorAll("[data-ck]").forEach(b=>b.onclick=()=>{const p=prayers.find(x=>x.id==b.dataset.ck); if(!p)return; p.answered=p.answered?null:todayStr(); store.set("prayers",prayers); renderPrayers()});
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ if(!confirm("Delete this prayer?"))return; prayers=prayers.filter(x=>x.id!=b.dataset.del); store.set("prayers",prayers); renderPrayers()});
+}
+
+function renderNotes(){
+  const td=byDay[todayDay]?todayDay:null;
+  const keys=Object.keys(notes).map(Number).filter(k=>(notes[k]||"").trim()&&byDay[k]&&k!==td).sort((a,b)=>b-a);
+  const list=(td?[td]:[]).concat(keys);
+  $("jBody").innerHTML = list.map(k=>`
+    <div class="card"><div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.15em">${k===td?"TODAY · ":""}DAY ${k} · ${esc(dateForDay(k).toUpperCase())}</div>
+    <div class="title" style="font-size:20px">${esc(byDay[k].title)}</div>
+    <textarea data-nt="${k}" placeholder="Write your thoughts, prayer, or answer here…" style="margin-top:10px;min-height:90px">${esc(notes[k]||"")}</textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="saved" data-ns="${k}" style="font-size:12px;color:#2f7a52"></span><button class="btn2 alt" data-n="${k}" style="width:auto;margin:0;padding:8px 14px;font-size:13px">Open reading ›</button></div></div>`).join("")
+    + (keys.length?"":'<div class="card empty">Whatever you write here or in "My Journal" on the Read page is kept together here.</div>')
+    + '<p style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px">Your journal is saved only on this device.</p>';
+  document.querySelectorAll("#jBody [data-n]").forEach(c=>c.onclick=()=>{cur=+c.dataset.n;show("vToday")});
+  document.querySelectorAll("#jBody [data-nt]").forEach(ta=>{let t;ta.oninput=()=>{clearTimeout(t);t=setTimeout(()=>{const k=+ta.dataset.nt;const v=ta.value;if(v.trim())notes[k]=v;else delete notes[k];store.set("notes",notes);const m=document.querySelector(`[data-ns="${k}"]`);if(m)m.textContent="Saved ✓"},500)}});
 }
 
 // ===== RENDER: SAVED =====
