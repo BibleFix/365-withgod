@@ -44,8 +44,6 @@ main{max-width:640px;margin:0 auto;padding:16px 16px 100px}
 .openbible{display:inline-block;margin-top:12px;background:var(--gold);color:var(--navy);text-decoration:none;font:700 13px Inter;padding:8px 14px;border-radius:9px}
 .monthintro{border-top:4px solid var(--gold)}
 /* keep Ko-fi's floating button and popup above the bottom menu */
-[class*="floatingchat-container-wrap"]{bottom:calc(78px + env(safe-area-inset-bottom)) !important;left:12px !important}
-[class*="floating-chat-kofi-popup-iframe"]{bottom:calc(140px + env(safe-area-inset-bottom)) !important;max-height:calc(100vh - 170px) !important}
 
 .kofi{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;background:#72a4f2;color:#fff;text-decoration:none;border-radius:12px;padding:13px;font:700 15px Inter;box-shadow:0 2px 0 rgba(0,0,0,.12)}
 
@@ -138,6 +136,16 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
 .days button.on{background:var(--navy);color:var(--gold2);border-color:var(--navy)}
 .btn2{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px;font:600 15px Inter;cursor:pointer;margin-top:10px}
 .btn2.alt{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.seg button{flex:1;border:none;background:none;border-radius:9px;padding:10px;font:600 14px Inter;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--navy);color:#fff}
+.pr{display:flex;gap:10px;align-items:flex-start}
+.pr .ck{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--gold);background:#fff;color:#fff;font:700 15px Inter;cursor:pointer;margin-top:2px}
+.pr .ck.is{background:#2f7a52;border-color:#2f7a52}
+.pr .tx{flex:1;font-size:15px;white-space:pre-wrap;word-break:break-word}
+.pr .meta{font-size:12px;color:var(--muted);margin-top:4px}
+.pr .del{flex:none;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0 4px}
+.yt{display:flex;align-items:center;justify-content:center;gap:10px;background:#e62117;color:#fff;text-decoration:none;border-radius:12px;padding:13px;font:700 15px Inter;margin-top:12px}
 .msg{font-size:13px;color:var(--muted);margin-top:8px;min-height:18px}
 .banner{background:var(--gold);color:var(--navy);border-radius:12px;padding:12px 14px;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .banner button{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:6px 12px;font:600 13px Inter;cursor:pointer}
@@ -166,6 +174,18 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
   </section>
 
 
+  <section id="vShop" class="hidden">
+    <div class="vod"><div class="lab">BIBLEFIX SHOP</div>
+      <p style="font-size:24px;font-style:normal;font-weight:700;margin:12px 0 8px">Go deeper in God's Word</p>
+      <div class="date" style="font-size:14px;line-height:1.5">Ebooks, guides and devotionals from BibleFix. Every purchase supports the ministry.</div></div>
+    <div class="card" style="margin-top:14px;text-align:center">
+      <div style="font-size:11px;letter-spacing:.2em;color:var(--gold);font-weight:700">FEATURED</div>
+      <img src="cover-assurance-of-salvation-101.jpg" alt="Assurance of Salvation 101 ebook cover" style="width:62%;max-width:240px;border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,.25);margin:14px auto 10px;display:block">
+      <p style="font-size:18px;font-weight:700;margin:4px 0 14px">Assurance of Salvation 101</p>
+      <a class="btn2" style="display:block;text-align:center;text-decoration:none;margin:0" href="https://ko-fi.com/biblefix/shop" target="_blank" rel="noopener">Visit the BibleFix Shop</a>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px">Opens the BibleFix shop on Ko-fi. Payments are handled securely by Ko-fi.</p>
+    </div>
+  </section>
   <section id="vGive" class="hidden">
     <div class="vod"><div class="lab">SUPPORT BIBLEFIX</div>
       <p style="font-size:24px;font-style:normal;font-weight:700;margin:12px 0 8px">Help us share God's Word</p>
@@ -216,8 +236,9 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
 <nav class="tabs">
   <button data-v="vToday" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>Read</button>
   <button data-v="vPlan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Plan</button>
-  <button data-v="vSaved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21l-1.5-1.3C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.4.8 4.5 2.1C13.1 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.5 11.2z"/></svg>Saved</button>
+  <button data-v="vSaved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21l-1.5-1.3C5.4 15.1 2 12.1 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.4.8 4.5 2.1C13.1 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.6-3.4 6.6-8.5 11.2z"/></svg>Journal</button>
   <button data-v="vRemind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Remind</button>
+  <button data-v="vShop" id="shopTab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Shop</button>
   <button data-v="vGive" id="giveTab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v9H4v-9"/><rect x="2" y="7" width="20" height="5"/><path d="M12 21V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Give</button>
 </nav>
 
@@ -295,12 +316,15 @@ function render(){
     <div class="sec"><h3>My Journal</h3><textarea id="note" placeholder="Write your thoughts, prayer, or answer here…">${esc(notes[cur]||"")}</textarea><div class="saved" id="savedMsg"></div></div>
     <div class="sec"><h3>Remember</h3><div class="remind">${esc(d.reminder)}</div></div>
   </div>
-  <button class="done ${isDone?"is":""}" id="doneBtn">${isDone?"✓ Completed":"Mark as Read"}</button>`;
+  <button class="done ${isDone?"is":""}" id="doneBtn">${isDone?"✓ Completed":"Mark as Read"}</button>
+  <button class="btn2 alt" id="shareBtn" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>Share today's reading</button>
+  ${videoCard()}`;
   if($("howtoOk")) $("howtoOk").onclick=()=>{store.set("seenHowto",true);render();scrollTo(0,0)};
   if($("goToday")) $("goToday").onclick=()=>{cur=byDay[todayDay]?todayDay:cur;render()};
   $("favBtn").onclick=()=>{favs=isFav?favs.filter(x=>x!==cur):[...favs,cur];store.set("favs",favs);stats();render()};
   $("doneBtn").onclick=()=>{if(isDone)delete done[cur];else done[cur]=todayStr();store.set("done",done);stats();render()};
   $("copyBtn").onclick=async e=>{try{await navigator.clipboard.writeText(`Today's Scripture: ${d.ref}\n${d.title}\n\n"${d.reminder}"\n\n365 Days with God #BibleFix`);e.target.textContent="Copied!"}catch(_){e.target.textContent="Can't copy"}setTimeout(()=>e.target.textContent="Copy",1500)};
+  $("shareBtn").onclick=()=>shareDay(d);
   let t;$("note").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{notes[cur]=e.target.value;store.set("notes",notes);$("savedMsg").textContent="Saved on this device"},500)};
 }
 
@@ -377,21 +401,78 @@ function renderPlan(){
   document.querySelectorAll(".cell").forEach(c=>c.onclick=()=>{cur=+c.dataset.d;show("vToday")});
 }
 
+// ===== SHARE A READING =====
+const APP_URL="https://biblefix.github.io/daily-bread/";
+async function shareDay(d){
+  const text=`${d.title}\nToday's Scripture: ${d.ref}\n\n"${d.reminder}"\n\nRead today's devotional free in 365 Days with God by BibleFix:`;
+  const b=$("shareBtn"), label=b.innerHTML;
+  try{
+    if(navigator.share){await navigator.share({title:"365 Days with God",text,url:APP_URL});return}
+    await navigator.clipboard.writeText(text+"\n"+APP_URL);
+    b.textContent="Copied! Paste it in a message";
+  }catch(e){ if(e&&e.name==="AbortError")return; b.textContent="Couldn't share"; }
+  setTimeout(()=>{b.innerHTML=label},2000);
+}
+
+// ===== LATEST BIBLEFIX VIDEO =====
+// Your YouTube channel (the /videos page always shows your newest video first)
+const YT_CHANNEL="https://www.youtube.com/@BibleFix";
+function videoCard(){
+  return `<div class="card" style="margin-top:14px;text-align:center">
+    <div class="lab2" style="color:var(--gold)">WATCH ON YOUTUBE</div>
+    <div class="title" style="font-size:22px;margin-top:4px">Latest from BibleFix</div>
+    <p style="font-size:14px;color:var(--muted);margin-top:4px">New videos every Monday, Tuesday and Friday.</p>
+    <a class="yt" href="${YT_CHANNEL}/videos" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M8 5.5v13l11-6.5z"/></svg>Watch the latest video</a>
+  </div>`;
+}
+
+// ===== PRAYER JOURNAL =====
+let prayers = store.get("prayers",[]);   // [{id,text,date,answered}]
+let jTab = "prayers", pFilter = "open";
+const niceDate = s => { try{ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}) }catch(e){ return s } };
+function renderJournal(){
+  $("vSaved").innerHTML = `<div class="seg"><button id="jP" class="${jTab==="prayers"?"on":""}">Prayers</button><button id="jS" class="${jTab==="saved"?"on":""}">Saved days</button></div><div id="jBody"></div>`;
+  $("jP").onclick=()=>{jTab="prayers";renderJournal()}; $("jS").onclick=()=>{jTab="saved";renderJournal()};
+  jTab==="prayers" ? renderPrayers() : renderSaved();
+}
+function renderPrayers(){
+  const open=prayers.filter(p=>!p.answered), ans=prayers.filter(p=>p.answered);
+  const list=(pFilter==="open"?open:ans).slice().sort((a,b)=>b.id-a.id);
+  $("jBody").innerHTML = `<div class="card">
+      <div class="title" style="font-size:22px">My Prayer List</div>
+      <p style="font-size:14px;color:var(--muted);margin:4px 0 10px">Write what you're praying for. When God answers, tap the circle to mark it answered.</p>
+      <textarea id="pNew" placeholder="What are you praying for?" style="min-height:80px"></textarea>
+      <button class="btn2" id="pAdd">Add prayer</button>
+    </div>
+    <div class="seg"><button id="fO" class="${pFilter==="open"?"on":""}">Praying (${open.length})</button><button id="fA" class="${pFilter==="ans"?"on":""}">Answered (${ans.length})</button></div>
+    ${list.length ? list.map(p=>`<div class="card pr">
+        <button class="ck ${p.answered?"is":""}" data-ck="${p.id}" aria-label="${p.answered?"Mark as still praying":"Mark as answered"}">${p.answered?"✓":""}</button>
+        <div class="tx">${esc(p.text)}<div class="meta">Added ${niceDate(p.date)}${p.answered?` · <b style="color:#2f7a52">Answered ${niceDate(p.answered)}</b>`:""}</div></div>
+        <button class="del" data-del="${p.id}" aria-label="Delete prayer">×</button></div>`).join("")
+      : `<div class="card empty">${pFilter==="open"?"No prayers yet. Add your first one above.":"Answered prayers will show here. Keep praying!"}</div>`}
+    ${ans.length&&pFilter==="ans"?`<p style="text-align:center;color:var(--gold);font-weight:600;font-size:14px;margin-top:6px">God has answered ${ans.length} ${ans.length===1?"prayer":"prayers"}. Give thanks!</p>`:""}
+    <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px">Your prayers are saved only on this device.</p>`;
+  $("pAdd").onclick=()=>{const v=$("pNew").value.trim(); if(!v)return; prayers.push({id:Date.now(),text:v,date:todayStr(),answered:null}); store.set("prayers",prayers); pFilter="open"; renderPrayers()};
+  $("fO").onclick=()=>{pFilter="open";renderPrayers()}; $("fA").onclick=()=>{pFilter="ans";renderPrayers()};
+  document.querySelectorAll("[data-ck]").forEach(b=>b.onclick=()=>{const p=prayers.find(x=>x.id==b.dataset.ck); if(!p)return; p.answered=p.answered?null:todayStr(); store.set("prayers",prayers); renderPrayers()});
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ if(!confirm("Delete this prayer?"))return; prayers=prayers.filter(x=>x.id!=b.dataset.del); store.set("prayers",prayers); renderPrayers()});
+}
+
 // ===== RENDER: SAVED =====
 function renderSaved(){
   const list=favs.map(f=>byDay[f]).filter(Boolean).sort((a,b)=>a.day-b.day);
-  $("vSaved").innerHTML = list.length ? list.map(d=>`
+  $("jBody").innerHTML = list.length ? list.map(d=>`
     <div class="card" style="cursor:pointer" data-d="${d.day}"><div class="th" style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.15em">DAY ${d.day}</div>
     <div class="title" style="font-size:22px">${esc(d.title)}</div><p style="color:var(--gold);font-weight:600;font-size:13px;margin-top:2px">${esc(d.ref)}</p><p style="font-style:italic;color:var(--muted);margin-top:4px">${esc(d.reminder)}</p></div>`).join("")
     : '<div class="card empty">Tap ♡ on any day to save it here.</div>';
-  document.querySelectorAll("#vSaved .card[data-d]").forEach(c=>c.onclick=()=>{cur=+c.dataset.d;show("vToday")});
+  document.querySelectorAll("#jBody .card[data-d]").forEach(c=>c.onclick=()=>{cur=+c.dataset.d;show("vToday")});
 }
 
 // ===== NAV =====
 function show(v){
-  ["vToday","vPlan","vSaved","vRemind","vGive"].forEach(id=>$(id).classList.toggle("hidden",id!==v));
+  ["vToday","vPlan","vSaved","vRemind","vShop","vGive"].forEach(id=>$(id).classList.toggle("hidden",id!==v));
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
-  if(v==="vToday")render(); if(v==="vPlan")renderPlan(); if(v==="vSaved")renderSaved(); if(v==="vGive")renderGive();
+  if(v==="vToday")render(); if(v==="vPlan")renderPlan(); if(v==="vSaved")renderJournal(); if(v==="vGive")renderGive();
   window.scrollTo(0,0);
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
@@ -487,6 +568,8 @@ const PAYPAL_URL="https://www.paypal.com/ncp/payment/2B5S6V7U3CXV4";
 const IS_PLAY_APP = (()=>{try{return document.referrer.startsWith("android-app://")||sessionStorage.getItem("bf_play")==="1"}catch(e){return false}})();
 try{ if(IS_PLAY_APP) sessionStorage.setItem("bf_play","1"); }catch(e){}
 if(IS_PLAY_APP || !PAYPAL_URL){ $("giveTab").remove(); }
+// The Google Play version hides the shop too (Play requires its own billing for digital goods).
+if(IS_PLAY_APP){ $("shopTab").remove(); }
 function renderGive(){
   const amts=[5,10,25,50];
   const me=/paypal\.me|paypalme/i.test(PAYPAL_URL);
@@ -502,25 +585,6 @@ function kofiBtn(){return `<a class="kofi" href="https://ko-fi.com/${KOFI_ID}" t
 
 
 // ===== KO-FI FLOATING "SUPPORT ME" BUTTON (web version only, needs internet) =====
-function loadKofiOverlay(){
-  try{
-    if(IS_PLAY_APP || navigator.onLine===false || window.__kofiLoaded) return;
-    window.__kofiLoaded=true;
-    const sc=document.createElement("script");
-    sc.src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js";
-    sc.async=true;
-    sc.onload=()=>{ try{ kofiWidgetOverlay.draw("biblefix",{
-      "type":"floating-chat",
-      "floating-chat.donateButton.text":"Support me",
-      "floating-chat.donateButton.background-color":"#00b9fe",
-      "floating-chat.donateButton.text-color":"#fff"
-    }); }catch(e){} };
-    sc.onerror=()=>{ window.__kofiLoaded=false; };
-    document.head.appendChild(sc);
-  }catch(e){}
-}
-window.addEventListener("load",()=>setTimeout(loadKofiOverlay,1500));
-window.addEventListener("online",loadKofiOverlay);
 
 // offline + install support
 if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
