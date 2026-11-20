@@ -140,6 +140,10 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
 .tts button{display:flex;align-items:center;gap:7px;background:var(--navy);color:#fff;border:none;border-radius:999px;padding:9px 16px;font:600 14px Inter;cursor:pointer;min-height:40px}
 .tts button.alt{background:#fff;color:var(--navy);border:1px solid var(--line)}
 .tts svg{width:16px;height:16px}
+.ttsset{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:6px 0 4px}
+.ttsset label{display:block;font:600 13px Inter;color:var(--navy);margin:8px 0 4px}
+.ttsset select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:15px Inter;background:#fff;color:var(--ink)}
+.ttsset .hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
 .seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
 .seg button{flex:1;border:none;background:none;border-radius:9px;padding:10px;font:600 14px Inter;color:var(--muted);cursor:pointer}
 .seg button.on{background:var(--navy);color:#fff}
@@ -312,6 +316,7 @@ function render(){
     <button class="fav" id="favBtn" aria-label="Save">${isFav?"♥":"♡"}</button>
     <div class="title">${esc(d.title)}</div>
     <div class="tts" id="ttsBar">${ttsBarHTML()}</div>
+    <div class="ttsset ${ttsSetOpen?"":"hidden"}" id="ttsSet">${ttsSetHTML()}</div>
     <div class="verse"><button class="copy" id="copyBtn">Copy</button><div class="lab2">TODAY'S SCRIPTURE</div><p class="pref">${esc(d.ref)}</p><div class="ref">Read it in your Bible before you read on</div>
       ${passageBlock(d.ref,"p0")}</div>
     <div class="sec reflect"><h3>Reflection</h3>${d.reflection.map(p=>`<p>${esc(p)}</p>`).join("")}</div>
@@ -409,7 +414,25 @@ function renderPlan(){
 
 // ===== LISTEN (reads the day aloud with the phone's built-in voice; works offline) =====
 const TTS_OK = (()=>{try{return "speechSynthesis" in window && typeof SpeechSynthesisUtterance!=="undefined"}catch(e){return false}})();
-let ttsState="idle", ttsDay=null, ttsQueue=[], ttsIdx=0, ttsToken=0;
+let ttsState="idle", ttsDay=null, ttsQueue=[], ttsIdx=0, ttsToken=0, ttsSetOpen=false;
+let ttsVoiceURI=store.get("ttsVoice",""), ttsRate=store.get("ttsRate",0.95);
+const TTS_SPEEDS=[[0.75,"Slow"],[0.95,"Normal"],[1.15,"Fast"],[1.35,"Faster"]];
+const IC_GEAR='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
+function ttsVoiceList(){ try{ const vs=(speechSynthesis.getVoices()||[]).slice(); const en=vs.filter(v=>/^en/i.test(v.lang)); return (en.length?en:vs).sort((a,b)=>(a.lang.localeCompare(b.lang))||a.name.localeCompare(b.name)); }catch(e){ return [] } }
+function ttsSetHTML(){
+  if(!TTS_OK) return "";
+  const vs=ttsVoiceList(); const cur=ttsVoice();
+  const opts=vs.length? vs.map(v=>`<option value="${esc(v.voiceURI||v.name)}" ${cur&&(cur.voiceURI||cur.name)===(v.voiceURI||v.name)?"selected":""}>${esc(v.name)} (${esc(v.lang)})${v.localService?"":" · needs internet"}</option>`).join("") : `<option value="">Phone's default voice</option>`;
+  return `<label for="ttsVoiceSel">Voice</label><select id="ttsVoiceSel">${opts}</select>
+    <label for="ttsRateSel">Speed</label><select id="ttsRateSel">${TTS_SPEEDS.map(([r,n])=>`<option value="${r}" ${Math.abs(r-ttsRate)<.01?"selected":""}>${n}</option>`).join("")}</select>
+    <button class="btn2 alt" id="ttsTest" style="margin-top:10px">Test this voice</button>
+    <div class="hint">Want more voices? Android: Settings → Text-to-speech → Google → Install voice data. iPhone: Settings → Accessibility → Spoken Content → Voices.</div>`;
+}
+function bindTtsSet(){
+  if($("ttsVoiceSel")) $("ttsVoiceSel").onchange=e=>{ ttsVoiceURI=e.target.value; store.set("ttsVoice",ttsVoiceURI); };
+  if($("ttsRateSel")) $("ttsRateSel").onchange=e=>{ ttsRate=+e.target.value; store.set("ttsRate",ttsRate); };
+  if($("ttsTest")) $("ttsTest").onclick=()=>{ ttsStop(); try{ const u=new SpeechSynthesisUtterance("This is the day the Lord has made. Let us rejoice and be glad in it."); const vo=ttsVoice(); if(vo){u.voice=vo;u.lang=vo.lang}else{u.lang="en-US"} u.rate=ttsRate; speechSynthesis.speak(u);}catch(e){} };
+}
 const IC_PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 8.5a5 5 0 0 1 0 7M19 5.5a9 9 0 0 1 0 13"/></svg>';
 const IC_PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true"><rect fill="currentColor" x="6" y="5" width="4" height="14" rx="1"/><rect fill="currentColor" x="14" y="5" width="4" height="14" rx="1"/></svg>';
 const IC_RESUME='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5v14l12-7z"/></svg>';
@@ -418,7 +441,7 @@ function ttsBarHTML(){
   if(!TTS_OK) return "";
   if(ttsState==="playing") return `<button id="ttsPause">${IC_PAUSE}Pause</button><button class="alt" id="ttsStopB">${IC_STOP}Stop</button>`;
   if(ttsState==="paused") return `<button id="ttsResume">${IC_RESUME}Resume</button><button class="alt" id="ttsStopB">${IC_STOP}Stop</button>`;
-  return `<button id="ttsPlay">${IC_PLAY}Listen</button>`;
+  return `<button id="ttsPlay">${IC_PLAY}Listen</button><button class="alt" id="ttsSetB" aria-expanded="${ttsSetOpen}">${IC_GEAR}Voice &amp; speed</button>`;
 }
 function ttsRefresh(){ const b=$("ttsBar"); if(b){ b.innerHTML=ttsBarHTML(); bindTts(byDay[cur]); } }
 function spokenRef(r){ return r.replace(/(\d+):(\d+)\s*[-–]\s*(\d+)/g,"$1, verses $2 to $3").replace(/(\d+):(\d+)/g,"$1, verse $2"); }
@@ -436,12 +459,13 @@ function ttsChunks(d){
   return out;
 }
 function ttsVoice(){ try{ const vs=speechSynthesis.getVoices()||[];
+  if(ttsVoiceURI){ const m=vs.find(v=>(v.voiceURI||v.name)===ttsVoiceURI); if(m) return m; }
   return vs.find(v=>/^en[-_]US/i.test(v.lang)&&v.localService) || vs.find(v=>/^en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null; }catch(e){ return null } }
 function ttsSpeakNext(tok){
   if(tok!==ttsToken) return;
   if(ttsIdx>=ttsQueue.length){ ttsState="idle"; ttsDay=null; ttsRefresh(); return; }
   const u=new SpeechSynthesisUtterance(ttsQueue[ttsIdx]); const vo=ttsVoice(); if(vo){u.voice=vo;u.lang=vo.lang}else{u.lang="en-US"}
-  u.rate=0.95; u.onend=()=>{ if(tok!==ttsToken)return; ttsIdx++; ttsSpeakNext(tok); };
+  u.rate=ttsRate; u.onend=()=>{ if(tok!==ttsToken)return; ttsIdx++; ttsSpeakNext(tok); };
   u.onerror=e=>{ if(tok!==ttsToken)return; if(e&&(e.error==="interrupted"||e.error==="canceled"))return; ttsIdx++; ttsSpeakNext(tok); };
   try{ speechSynthesis.speak(u); }catch(e){ ttsStop(); }
 }
@@ -454,8 +478,10 @@ function bindTts(d){
   if($("ttsPause")) $("ttsPause").onclick=()=>{ try{speechSynthesis.pause()}catch(e){} ttsState="paused"; ttsRefresh(); };
   if($("ttsResume")) $("ttsResume").onclick=()=>{ try{speechSynthesis.resume()}catch(e){} ttsState="playing"; ttsRefresh(); };
   if($("ttsStopB")) $("ttsStopB").onclick=ttsStop;
+  if($("ttsSetB")) $("ttsSetB").onclick=()=>{ ttsSetOpen=!ttsSetOpen; const p=$("ttsSet"); if(p){ p.innerHTML=ttsSetHTML(); p.classList.toggle("hidden",!ttsSetOpen); bindTtsSet(); } $("ttsSetB").setAttribute("aria-expanded",ttsSetOpen); };
+  bindTtsSet();
 }
-try{ if(TTS_OK){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; } }catch(e){}
+try{ if(TTS_OK){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{ const p=$("ttsSet"); if(p&&ttsSetOpen){ p.innerHTML=ttsSetHTML(); bindTtsSet(); } }; } }catch(e){}
 window.addEventListener("pagehide",()=>{ try{ if(TTS_OK) speechSynthesis.cancel(); }catch(e){} });
 
 // ===== SHARE A READING =====
