@@ -401,7 +401,7 @@ function renderPlan(){
 }
 
 // ===== SHARE A READING =====
-const APP_URL="https://biblefix.github.io/daily-bread/";
+const APP_URL="https://biblefix.github.io/365-withgod/";
 async function shareDay(d){
   const text=`${d.title}\nToday's Scripture: ${d.ref}\n\n"${d.reminder}"\n\nRead today's devotional free in 365 Days with God by BibleFix:`;
   const b=$("shareBtn"), label=b.innerHTML;
@@ -562,12 +562,12 @@ async function saveIcs(ics){
   const msg="Open the downloaded file and tap Add to put it in your calendar.";
   try{
     const dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null;
-    if(dl){ await dl.save({filename:"daily-bread-reminder.ics",data:ics}); $("rCalMsg").textContent=msg; return; }
+    if(dl){ await dl.save({filename:"365-days-with-god-reminder.ics",data:ics}); $("rCalMsg").textContent=msg; return; }
   }catch(e){ $("rCalMsg").textContent="Download was cancelled."; return; }
   try{
     const a=document.createElement("a");
     a.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
-    a.download="daily-bread-reminder.ics"; document.body.appendChild(a); a.click(); a.remove();
+    a.download="365-days-with-god-reminder.ics"; document.body.appendChild(a); a.click(); a.remove();
     $("rCalMsg").textContent="Open the downloaded file and tap Add to put it in your calendar.";
   }catch(e){$("rCalMsg").textContent="Couldn't create the file here. Try again from the installed app."}
 };
