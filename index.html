@@ -136,6 +136,10 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
 .days button.on{background:var(--navy);color:var(--gold2);border-color:var(--navy)}
 .btn2{width:100%;background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px;font:600 15px Inter;cursor:pointer;margin-top:10px}
 .btn2.alt{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.tts{display:flex;gap:8px;margin:10px 0 2px;flex-wrap:wrap}
+.tts button{display:flex;align-items:center;gap:7px;background:var(--navy);color:#fff;border:none;border-radius:999px;padding:9px 16px;font:600 14px Inter;cursor:pointer;min-height:40px}
+.tts button.alt{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.tts svg{width:16px;height:16px}
 .seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
 .seg button{flex:1;border:none;background:none;border-radius:9px;padding:10px;font:600 14px Inter;color:var(--muted);cursor:pointer}
 .seg button.on{background:var(--navy);color:#fff}
@@ -287,6 +291,7 @@ function stats(){$("sStreak").textContent=streak();$("sDone").textContent=Object
 
 // ===== RENDER: TODAY =====
 function render(){
+  if(ttsDay!==null && ttsDay!==cur) ttsStop();
   const d = byDay[cur];
   $("dayNum").textContent = "Day "+cur+" · "+dateForDay(cur);
   $("theme").textContent = MONTH_THEMES[monthOf(cur)];
@@ -306,6 +311,7 @@ function render(){
   <div class="card">
     <button class="fav" id="favBtn" aria-label="Save">${isFav?"♥":"♡"}</button>
     <div class="title">${esc(d.title)}</div>
+    <div class="tts" id="ttsBar">${ttsBarHTML()}</div>
     <div class="verse"><button class="copy" id="copyBtn">Copy</button><div class="lab2">TODAY'S SCRIPTURE</div><p class="pref">${esc(d.ref)}</p><div class="ref">Read it in your Bible before you read on</div>
       ${passageBlock(d.ref,"p0")}</div>
     <div class="sec reflect"><h3>Reflection</h3>${d.reflection.map(p=>`<p>${esc(p)}</p>`).join("")}</div>
@@ -324,6 +330,7 @@ function render(){
   $("doneBtn").onclick=()=>{if(isDone)delete done[cur];else done[cur]=todayStr();store.set("done",done);stats();render()};
   $("copyBtn").onclick=async e=>{try{await navigator.clipboard.writeText(`Today's Scripture: ${d.ref}\n${d.title}\n\n"${d.reminder}"\n\n365 Days with God #BibleFix`);e.target.textContent="Copied!"}catch(_){e.target.textContent="Can't copy"}setTimeout(()=>e.target.textContent="Copy",1500)};
   $("shareBtn").onclick=()=>shareDay(d);
+  bindTts(d);
   let t;$("note").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{if(e.target.value.trim())notes[cur]=e.target.value;else delete notes[cur];store.set("notes",notes);$("savedMsg").textContent="Saved on this device"},500)};
 }
 
@@ -399,6 +406,57 @@ function renderPlan(){
     + `<div class="card empty">${DAYS.length} of 365 days loaded</div>`;
   document.querySelectorAll(".cell").forEach(c=>c.onclick=()=>{cur=+c.dataset.d;show("vToday")});
 }
+
+// ===== LISTEN (reads the day aloud with the phone's built-in voice; works offline) =====
+const TTS_OK = (()=>{try{return "speechSynthesis" in window && typeof SpeechSynthesisUtterance!=="undefined"}catch(e){return false}})();
+let ttsState="idle", ttsDay=null, ttsQueue=[], ttsIdx=0, ttsToken=0;
+const IC_PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 8.5a5 5 0 0 1 0 7M19 5.5a9 9 0 0 1 0 13"/></svg>';
+const IC_PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true"><rect fill="currentColor" x="6" y="5" width="4" height="14" rx="1"/><rect fill="currentColor" x="14" y="5" width="4" height="14" rx="1"/></svg>';
+const IC_RESUME='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5v14l12-7z"/></svg>';
+const IC_STOP='<svg viewBox="0 0 24 24" aria-hidden="true"><rect fill="currentColor" x="6" y="6" width="12" height="12" rx="1.5"/></svg>';
+function ttsBarHTML(){
+  if(!TTS_OK) return "";
+  if(ttsState==="playing") return `<button id="ttsPause">${IC_PAUSE}Pause</button><button class="alt" id="ttsStopB">${IC_STOP}Stop</button>`;
+  if(ttsState==="paused") return `<button id="ttsResume">${IC_RESUME}Resume</button><button class="alt" id="ttsStopB">${IC_STOP}Stop</button>`;
+  return `<button id="ttsPlay">${IC_PLAY}Listen</button>`;
+}
+function ttsRefresh(){ const b=$("ttsBar"); if(b){ b.innerHTML=ttsBarHTML(); bindTts(byDay[cur]); } }
+function spokenRef(r){ return r.replace(/(\d+):(\d+)\s*[-–]\s*(\d+)/g,"$1, verses $2 to $3").replace(/(\d+):(\d+)/g,"$1, verse $2"); }
+function ttsChunks(d){
+  const parts=[d.title+(/[.!?]$/.test(d.title)?"":"."), "Today's Scripture: "+spokenRef(d.ref)+"."];
+  const v=PASSAGES[d.ref]; if(v) parts.push(v.map(x=>x[2]).join(" "));
+  parts.push("Reflection."); d.reflection.forEach(p=>parts.push(p));
+  parts.push("Today's practice. "+d.practice);
+  parts.push("Prayer. "+d.prayer);
+  parts.push("Reflection question. "+d.question);
+  parts.push("Remember. "+d.reminder);
+  const out=[]; // keep pieces short so phones don't cut off long speech
+  parts.forEach(p=>{ const sents=p.match(/[^.!?]+[.!?]+["”’)]*\s*|[^.!?]+$/g)||[p]; let buf="";
+    sents.forEach(x=>{ if((buf+x).length>220&&buf){out.push(buf.trim());buf=""} buf+=x; }); if(buf.trim())out.push(buf.trim()); });
+  return out;
+}
+function ttsVoice(){ try{ const vs=speechSynthesis.getVoices()||[];
+  return vs.find(v=>/^en[-_]US/i.test(v.lang)&&v.localService) || vs.find(v=>/^en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null; }catch(e){ return null } }
+function ttsSpeakNext(tok){
+  if(tok!==ttsToken) return;
+  if(ttsIdx>=ttsQueue.length){ ttsState="idle"; ttsDay=null; ttsRefresh(); return; }
+  const u=new SpeechSynthesisUtterance(ttsQueue[ttsIdx]); const vo=ttsVoice(); if(vo){u.voice=vo;u.lang=vo.lang}else{u.lang="en-US"}
+  u.rate=0.95; u.onend=()=>{ if(tok!==ttsToken)return; ttsIdx++; ttsSpeakNext(tok); };
+  u.onerror=e=>{ if(tok!==ttsToken)return; if(e&&(e.error==="interrupted"||e.error==="canceled"))return; ttsIdx++; ttsSpeakNext(tok); };
+  try{ speechSynthesis.speak(u); }catch(e){ ttsStop(); }
+}
+function ttsPlay(d){ try{ speechSynthesis.cancel(); }catch(e){}
+  ttsToken++; ttsQueue=ttsChunks(d); ttsIdx=0; ttsDay=cur; ttsState="playing"; ttsRefresh(); ttsSpeakNext(ttsToken); }
+function ttsStop(){ ttsToken++; try{ if(TTS_OK) speechSynthesis.cancel(); }catch(e){} const was=ttsState; ttsState="idle"; ttsDay=null; if(was!=="idle") ttsRefresh(); }
+function bindTts(d){
+  if(!TTS_OK||!d) return;
+  if($("ttsPlay")) $("ttsPlay").onclick=()=>ttsPlay(d);
+  if($("ttsPause")) $("ttsPause").onclick=()=>{ try{speechSynthesis.pause()}catch(e){} ttsState="paused"; ttsRefresh(); };
+  if($("ttsResume")) $("ttsResume").onclick=()=>{ try{speechSynthesis.resume()}catch(e){} ttsState="playing"; ttsRefresh(); };
+  if($("ttsStopB")) $("ttsStopB").onclick=ttsStop;
+}
+try{ if(TTS_OK){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; } }catch(e){}
+window.addEventListener("pagehide",()=>{ try{ if(TTS_OK) speechSynthesis.cancel(); }catch(e){} });
 
 // ===== SHARE A READING =====
 const APP_URL="https://biblefix.github.io/365-withgod/";
@@ -484,6 +542,7 @@ function renderSaved(){
 
 // ===== NAV =====
 function show(v){
+  if(v!=="vToday") ttsStop();
   ["vToday","vPlan","vSaved","vRemind","vShop","vGive"].forEach(id=>$(id).classList.toggle("hidden",id!==v));
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   if(v==="vToday")render(); if(v==="vPlan")renderPlan(); if(v==="vSaved")renderJournal(); if(v==="vGive")renderGive();
