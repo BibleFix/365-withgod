@@ -248,7 +248,7 @@ input[type=time]{font:600 18px Inter;color:var(--navy);border:1px solid var(--li
     </div>
   </section>
 
-  <div class="foot">365 Days with God: Daily Bread · © 2027 BibleFix. All rights reserved.<br>Scripture passages in the app: World English Bible (public domain).<br><a href="#" id="guideLink" style="color:inherit">App guide</a> · <a href="privacy.html" style="color:inherit">Privacy Policy</a></div>
+  <div class="foot">365 Days with God: Daily Bread · © 2027 BibleFix. All rights reserved.<br>Scripture passages in the app: Berean Standard Bible (BSB), public domain.<br><a href="#" id="guideLink" style="color:inherit">App guide</a> · <a href="privacy.html" style="color:inherit">Privacy Policy</a></div>
 </main>
 
 <nav class="tabs">
@@ -352,7 +352,7 @@ function render(){
 
 
 
-// ===== SCRIPTURE PASSAGES (offline, WEB) =====
+// ===== SCRIPTURE PASSAGES (offline, BSB) =====
 const PASSAGES=(typeof RAW_PASSAGES!=="undefined"?RAW_PASSAGES:{});
 let openPassages=store.get("openPassages",false);
 function passageBlock(ref,id){
@@ -362,7 +362,7 @@ function passageBlock(ref,id){
   const multi=v.some(x=>x[0]!==v[0][0]); let last=null;
   const text=v.map(([c,n,t])=>{const lab=(multi&&last!==c)?`${c}:${n}`:n; last=c; return `<sup>${lab}</sup>${esc(t)}`}).join(" ");
   return `<button class="openbible" data-pt="${id}">${openPassages?"Hide passage":"📖 Read passage"}</button>
-    <div class="passage ${openPassages?"":"hidden"}" id="${id}"><div class="ptxt">${text}</div><div class="pfoot">World English Bible · ${online}</div></div>`;
+    <div class="passage ${openPassages?"":"hidden"}" id="${id}"><div class="ptxt">${text}</div><div class="pfoot">Berean Standard Bible · ${online}</div></div>`;
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-pt]");if(!b)return;
   const el=$(b.dataset.pt); if(!el)return; const show=el.classList.contains("hidden");
@@ -485,11 +485,11 @@ let ttsState="idle", ttsDay=null, ttsQueue=[], ttsIdx=0, ttsToken=0, ttsSetOpen=
 let ttsVoiceURI=store.get("ttsVoice",""), ttsRate=store.get("ttsRate",0.95);
 const TTS_SPEEDS=[[0.75,"Slow"],[0.95,"Normal"],[1.15,"Fast"],[1.35,"Faster"]];
 const IC_GEAR='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
-function ttsVoiceList(){ try{ const vs=(speechSynthesis.getVoices()||[]).slice(); const en=vs.filter(v=>/^en/i.test(v.lang)); return (en.length?en:vs).sort((a,b)=>(a.lang.localeCompare(b.lang))||a.name.localeCompare(b.name)); }catch(e){ return [] } }
+function ttsVoiceList(){ try{ const vs=(speechSynthesis.getVoices()||[]).slice(); const en=vs.filter(v=>/^en/i.test(v.lang)); return (en.length?en:vs).sort((a,b)=>(ttsScore(b)-ttsScore(a))||a.name.localeCompare(b.name)); }catch(e){ return [] } }
 function ttsSetHTML(){
   if(!TTS_OK) return "";
   const vs=ttsVoiceList(); const cur=ttsVoice();
-  const opts=vs.length? vs.map(v=>`<option value="${esc(v.voiceURI||v.name)}" ${cur&&(cur.voiceURI||cur.name)===(v.voiceURI||v.name)?"selected":""}>${esc(v.name)} (${esc(v.lang)})${v.localService?"":" · needs internet"}</option>`).join("") : `<option value="">Phone's default voice</option>`;
+  const opts=vs.length? vs.map((v,i)=>`<option value="${esc(v.voiceURI||v.name)}" ${cur&&(cur.voiceURI||cur.name)===(v.voiceURI||v.name)?"selected":""}>${i===0&&ttsScore(v)>=30?"★ Best · ":""}${esc(v.name)} (${esc(v.lang)})${v.localService?"":" · needs internet"}</option>`).join("") : `<option value="">Phone's default voice</option>`;
   return `<label for="ttsVoiceSel">Voice</label><select id="ttsVoiceSel">${opts}</select>
     <label for="ttsRateSel">Speed</label><select id="ttsRateSel">${TTS_SPEEDS.map(([r,n])=>`<option value="${r}" ${Math.abs(r-ttsRate)<.01?"selected":""}>${n}</option>`).join("")}</select>
     <button class="btn2 alt" id="ttsTest" style="margin-top:10px">Test this voice</button>
@@ -516,24 +516,38 @@ function ttsChunks(d){
   const parts=[d.title+(/[.!?]$/.test(d.title)?"":"."), "Today's Scripture: "+spokenRef(d.ref)+"."];
   const v=PASSAGES[d.ref]; if(v) parts.push(v.map(x=>x[2]).join(" "));
   parts.push("Reflection."); d.reflection.forEach(p=>parts.push(p));
-  parts.push("Today's practice. "+d.practice);
-  parts.push("Prayer. "+d.prayer);
-  parts.push("Reflection question. "+d.question);
-  parts.push("Remember. "+d.reminder);
+  parts.push("Today's practice.", d.practice);
+  parts.push("Prayer.", d.prayer);
+  parts.push("Reflection question.", d.question);
+  parts.push("Remember.", d.reminder);
+  const clean=t=>String(t).replace(/\s*[—–]\s*/g,", ").replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/\s*\.\.\.\s*/g,", ").replace(/[*_#•]/g,"").replace(/\s+/g," ").trim();
+  for(let i=0;i<parts.length;i++) parts[i]=clean(parts[i]);
   const out=[]; // keep pieces short so phones don't cut off long speech
   parts.forEach(p=>{ const sents=p.match(/[^.!?]+[.!?]+["”’)]*\s*|[^.!?]+$/g)||[p]; let buf="";
     sents.forEach(x=>{ if((buf+x).length>220&&buf){out.push(buf.trim());buf=""} buf+=x; }); if(buf.trim())out.push(buf.trim()); });
   return out;
 }
+window.addEventListener("online",()=>{ttsOffline=false});
+let ttsOffline=false; // set when a network voice fails, so we fall back to an on-phone voice
+function ttsScore(v){ let s=0; const n=(v.name||"");
+  if(/premium/i.test(n)) s+=60; if(/enhanced|neural|natural|wavenet|studio/i.test(n)) s+=45; if(/google/i.test(n)) s+=30; if(/siri/i.test(n)) s+=40;
+  if(/^en[-_]US/i.test(v.lang)) s+=12; else if(/^en[-_](GB|AU|CA|IE|NZ)/i.test(v.lang)) s+=6; else if(/^en/i.test(v.lang)) s+=3;
+  if(/compact|espeak|robot|whisper|bells|bad news|boing|bubbles|cellos|jester|organ|trinoids|zarvox|albert|fred|junior|ralph|kathy|superstar|wobble|grandma|grandpa|eddy|flo|reed|rocko|sandy|shelley/i.test(n)) s-=80;
+  if(!v.localService && (ttsOffline || navigator.onLine===false)) s-=200;
+  return s; }
+function ttsBest(){ try{ const vs=(speechSynthesis.getVoices()||[]).filter(v=>/^en/i.test(v.lang)); return vs.sort((a,b)=>ttsScore(b)-ttsScore(a))[0]||null }catch(e){ return null } }
 function ttsVoice(){ try{ const vs=speechSynthesis.getVoices()||[];
-  if(ttsVoiceURI){ const m=vs.find(v=>(v.voiceURI||v.name)===ttsVoiceURI); if(m) return m; }
+  if(ttsVoiceURI){ const m=vs.find(v=>(v.voiceURI||v.name)===ttsVoiceURI); if(m && !(ttsOffline && !m.localService)) return m; }
+  const best=ttsBest(); if(best) return best;
   return vs.find(v=>/^en[-_]US/i.test(v.lang)&&v.localService) || vs.find(v=>/^en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null; }catch(e){ return null } }
 function ttsSpeakNext(tok){
   if(tok!==ttsToken) return;
   if(ttsIdx>=ttsQueue.length){ ttsState="idle"; ttsDay=null; ttsRefresh(); return; }
   const u=new SpeechSynthesisUtterance(ttsQueue[ttsIdx]); const vo=ttsVoice(); if(vo){u.voice=vo;u.lang=vo.lang}else{u.lang="en-US"}
-  u.rate=ttsRate; u.onend=()=>{ if(tok!==ttsToken)return; ttsIdx++; ttsSpeakNext(tok); };
-  u.onerror=e=>{ if(tok!==ttsToken)return; if(e&&(e.error==="interrupted"||e.error==="canceled"))return; ttsIdx++; ttsSpeakNext(tok); };
+  u.rate=ttsRate; u.pitch=1; u.onend=()=>{ if(tok!==ttsToken)return; ttsIdx++; ttsSpeakNext(tok); };
+  u.onerror=e=>{ if(tok!==ttsToken)return; if(e&&(e.error==="interrupted"||e.error==="canceled"))return;
+    if(vo && !vo.localService && !ttsOffline){ ttsOffline=true; ttsSpeakNext(tok); return; } // retry this part with an offline voice
+    ttsIdx++; ttsSpeakNext(tok); };
   try{ speechSynthesis.speak(u); }catch(e){ ttsStop(); }
 }
 function ttsPlay(d){ try{ speechSynthesis.cancel(); }catch(e){}
